@@ -7,6 +7,10 @@ from . import sign
 
 __doc__ = '''\
 Usage:
+    saltpack genkey-enc
+    saltpack genkey-sign
+    saltpack pubout-enc
+    saltpack pubout-sign
     saltpack encrypt [<private>] [<recipients>...] [options]
     saltpack decrypt [<private>] [options]
     saltpack sign [<private>] [options]
@@ -17,10 +21,15 @@ Usage:
     saltpack unblock [<chars>] [options]
     saltpack efficient <alphabet_size> [<max-size>]
 
+Key generation:  use genkey-enc for encryption key (32 bytes)
+                 use genkey-sign for signing key (64 bytes)
+                 use pubout-enc and pubout-sign to generate public key to stdout (reads stdin for private key)
+
 For encrypt, if no private key is given, the default is 32 zero bytes. If no
 recipients are given, the default is the sender's own public key.
 
 For signing, if no private key is given, the default is a random key.
+The private key must be 64 bytes for signing.
 
 Options:
     --alphabet=<str>                the alphabet string to index into when armoring
@@ -57,10 +66,18 @@ def main():
         armor.do_armor(args)
     elif args['dearmor']:
         armor.do_dearmor(args)
+    elif args['genkey-enc']:
+        encrypt.do_genkey(args)
+    elif args['pubout-enc']:
+        encrypt.do_pubout(args)
     elif args['encrypt']:
         encrypt.do_encrypt(args)
     elif args['decrypt']:
         encrypt.do_decrypt(args)
+    elif args['genkey-sign']:
+        sign.do_genkey(args)
+    elif args['pubout-sign']:
+        sign.do_pubout(args)
     elif args['sign']:
         sign.do_sign(args)
     elif args['verify']:

@@ -187,3 +187,18 @@ def do_verify(args):
     else:
         output = verify_attached(signature)
         sys.stdout.buffer.write(output)
+
+def do_genkey(args):
+    private = nacl.bindings.crypto_sign_keypair()[1]
+    private = binascii.hexlify(private)
+    assert len(private) == 128
+    sys.stdout.buffer.write(private)
+
+def do_pubout(args):
+    private = sys.stdin.buffer.read()
+    private = binascii.unhexlify(private)
+    assert len(private) == 64
+    public = private[32:]
+    public = binascii.hexlify(public)
+    assert len(public) == 64
+    sys.stdout.buffer.write(public)

@@ -52,6 +52,7 @@ def chunks_loop(message, chunk_size, major_version):
     if major_version == 1:
         yield chunks_count, b'', True
 
+
 def json_repr(obj):
     # We need to repr everything that JSON doesn't directly support,
     # particularly bytes.
@@ -161,7 +162,7 @@ def encrypt(sender_private, recipient_public_keys, message, chunk_size, *,
             mac_nonce_recipient = bytes(mac_key_nonce_base) + recipient_index.to_bytes(8, "big")
 
         mac_key_box = nacl.bindings.crypto_box(
-            message=b'\0' * 32,
+            message=b'\0'*32,
             nonce=mac_nonce_recipient,
             pk=recipient_public,
             sk=sender_private)
@@ -174,7 +175,7 @@ def encrypt(sender_private, recipient_public_keys, message, chunk_size, *,
             mac_nonce_recipient = bytes(mac_key_nonce_base) + recipient_index.to_bytes(8, "big")
 
             mac_key_box2 = nacl.bindings.crypto_box(
-                message=b'\0' * 32,
+                message=b'\0'*32,
                 nonce=mac_nonce_recipient,
                 pk=recipient_public,
                 sk=ephemeral_private)
@@ -280,15 +281,13 @@ def decrypt(input, recipient_private):
         mac_key_nonce_base[15] &= 254  # clear the last bit
         mac_key_box_sender = nacl.bindings.crypto_box(
             message=b'\0'*32,
-            nonce=bytes(mac_key_nonce_base) +
-                  recipient_index.to_bytes(8, "big"),
+            nonce=bytes(mac_key_nonce_base) + recipient_index.to_bytes(8, "big"),
             pk=sender_public,
             sk=recipient_private)
         mac_key_nonce_base[15] |= 1  # set the last bit
         mac_key_box_ephemeral = nacl.bindings.crypto_box(
             message=b'\0'*32,
-            nonce=bytes(mac_key_nonce_base) +
-                    recipient_index.to_bytes(8, "big"),
+            nonce=bytes(mac_key_nonce_base) + recipient_index.to_bytes(8, "big"),
             pk=ephemeral_public,
             sk=recipient_private)
         mac_key = nacl.bindings.crypto_hash(
@@ -408,3 +407,18 @@ def do_decrypt(args):
     private = get_private(args)
     decoded_message = decrypt(message, private)
     sys.stdout.buffer.write(decoded_message)
+
+def do_genkey(args):
+    private = os.urandom(32)
+    private = binascii.hexlify(private)
+    assert len(private) == 64
+    sys.stdout.buffer.write(private)
+
+def do_pubout(args):
+    private = sys.stdin.buffer.read()
+    private = binascii.unhexlify(private)
+    assert len(private) == 32
+    public = nacl.bindings.crypto_scalarmult_base(private)
+    public = binascii.hexlify(public)
+    assert len(public) == 64
+    sys.stdout.buffer.write(public)
