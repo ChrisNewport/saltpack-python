@@ -4,6 +4,8 @@ from . import armor
 from . import debug
 from . import encrypt
 from . import sign
+from . import signcrypt
+#from . import keyring
 
 __doc__ = '''\
 Usage:
@@ -11,10 +13,13 @@ Usage:
     saltpack genkey-sign
     saltpack pubout-enc
     saltpack pubout-sign
+    saltpack keyring create [options]
     saltpack encrypt [<private>] [<recipients>...] [options]
     saltpack decrypt [<private>] [options]
     saltpack sign [<private>] [options]
     saltpack verify [options]
+    saltpack signcrypt [<private>] [--pr key]... [--sr key]... [options]
+    saltpack designcrypt [<private>] [options]
     saltpack armor [<bytes>] [options]
     saltpack dearmor [<chars>] [options]
     saltpack block [<bytes>] [options]
@@ -33,23 +38,27 @@ The private key must be 64 bytes for signing.
 
 Options:
     --alphabet=<str>                the alphabet string to index into when armoring
+    --anon                          anonymous sender
     -b --binary                     don't use saltpack armor
     --base64                        for armor, use the Base64 alphabet and 3-byte blocks
     --base85                        for armor, use the Base85 alphabet and 4-byte blocks
-    --block=<size>                  the armoring block size
-    --chunk=<size>                  size of payload chunks, default 1 MB
+    --block=<size>                  the armoring block size (default 32)
+    --chunk=<size>                  size of payload chunks in bytes (default 1 MB)
     -d --detached                   make a detached signature
     --debug                         debug mode
+    -f --file=<file>                filename for keyring database
     -m --message=<msg>              message text, instead of reading stdin
     --major-version=<major-version> saltpack major version used for encryption
+    --pr=<key>                      public key recipient (can be used more than once for multiple keys)
     --raw                           omit armor header and footer
     --shift                         shift the encoded number left as far as possible
     -s --signature=<file>           verify with a detached signature
+    --sr=<key>                      symmetric key recipient (can be used more than once for multiple keys)
     --twitter                       for armor, use the Twitter alphabet
     --visible                       make the encryption recipients visible
 '''
 
-FORMAT_VERSION = 1
+FORMAT_VERSION = 2
 
 
 def main():
@@ -82,5 +91,12 @@ def main():
         sign.do_sign(args)
     elif args['verify']:
         sign.do_verify(args)
+    elif args['signcrypt']:
+        signcrypt.do_signcrypt(args)
+    elif args['designcrypt']:
+        signcrypt.do_designcrypt(args)
+    elif args['keyring']:
+        raise RuntimeError("not implemented")
+        #keyring.do_keyring(args)
     else:
         raise RuntimeError("unreachable")

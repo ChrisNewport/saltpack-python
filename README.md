@@ -1,5 +1,17 @@
-[![Build Status](https://travis-ci.org/keybase/saltpack-python.svg?branch=master)](https://travis-ci.org/keybase/saltpack-python)
 
+## Undergoing heavy modification, things are likely broken...
+
+The main goal of this fork is to improve the Python implementation of Saltpack to bring it up-to-date with the spec and have closer feature parity with other actively maintained implementations.
+
+Status:
+  - [x] Basic key generation
+  - [x] v2 Encryption support
+  - [x] v2 Signing support
+  - [x] Signcryption support
+  - [ ] Keyring implementation
+  - [ ] EdX25519 and X25519 support / key formatting with bech32 for [keys.pub](https://keys.pub/docs/specs/keys.html) compatibility
+
+---
 A Python implementation of [saltpack](https://saltpack.org/), mainly for
 testing and experimentation. You can play with commands like:
 

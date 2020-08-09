@@ -119,13 +119,13 @@ def encrypt(sender_private, recipient_public_keys, message, chunk_size, *,
         major_version = DEFAULT_MAJOR_VERSION
 
     recipient_pairs = []
-    for i, recipient_public in enumerate(recipient_public_keys):
+    for recipient_index, recipient_public in enumerate(recipient_public_keys):
         # The recipient box holds the sender's long-term public key and the
         # symmetric message encryption key. It's encrypted for each recipient
         # with the ephemeral private key.
         payload_key_box = nacl.bindings.crypto_box(
             message=payload_key,
-            nonce=payload_key_nonce(major_version, i),
+            nonce=payload_key_nonce(major_version, recipient_index),
             pk=recipient_public,
             sk=ephemeral_private)
         # None is for the recipient public key, which is optional.
