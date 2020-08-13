@@ -43,6 +43,7 @@ Options:
     --base64                        for armor, use the Base64 alphabet and 3-byte blocks
     --base85                        for armor, use the Base85 alphabet and 4-byte blocks
     --block=<size>                  the armoring block size (default 32)
+    --brand=<str>...................set brand, default 'SALTPACK'
     --chunk=<size>                  size of payload chunks in bytes (default 1 MB)
     -d --detached                   make a detached signature
     --debug                         debug mode

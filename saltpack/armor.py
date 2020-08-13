@@ -240,7 +240,7 @@ def read_between_periods(s):
 
 
 def armor(input_bytes, *, alphabet=b62alphabet, block_size=32, raw=False,
-          shift=False, message_type='MESSAGE'):
+          shift=False, message_type='MESSAGE', brand='SALTPACK'):
     chunks = chunk_iterable(input_bytes, block_size)
     output = ""
     for chunk in chunks:
@@ -250,8 +250,8 @@ def armor(input_bytes, *, alphabet=b62alphabet, block_size=32, raw=False,
     words = chunk_iterable(output, 15)
     sentences = chunk_iterable(words, 200)
     joined = '\n'.join(' '.join(sentence) for sentence in sentences)
-    header = 'BEGIN SALTPACK {}. '.format(message_type)
-    footer = '. END SALTPACK {}.'.format(message_type)
+    header = 'BEGIN {} {}. '.format(brand, message_type)
+    footer = '. END {} {}.'.format(brand, message_type)
     return header + joined + footer
 
 
@@ -302,6 +302,12 @@ def get_alphabet(args):
         alphabet = get_twitter_alphabet()
     return alphabet
 
+def get_brand(args):
+    brand = 'SALTPACK'
+    if args['--brand']:
+        brand = args['--brand']
+    return brand
+
 
 def get_bytes_in(args):
     if args['<bytes>'] is not None:
@@ -342,12 +348,13 @@ def do_unblock(args):
 
 def do_armor(args):
     alphabet = get_alphabet(args)
+    brand = get_brand(args)
     bytes_in = get_bytes_in(args)
     shift = args['--shift']
     raw = args['--raw']
     block_size = get_block_size(args)
     armored = armor(bytes_in, alphabet=alphabet, block_size=block_size,
-                    raw=raw, shift=shift)
+                    raw=raw, shift=shift, brand=brand)
     print(armored)
 
 
